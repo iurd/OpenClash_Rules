@@ -46,6 +46,7 @@ DOMAIN-SUFFIX,checkip.dyndns.org
 DOMAIN-SUFFIX,checkipv6.dyndns.org
 DOMAIN-SUFFIX,ifconfig.co
 DOMAIN-SUFFIX,api.myip.com
+DOMAIN-SUFFIX,giveup.top
 # DOMAIN-SUFFIX,ip-api.com 会影响某些 DNS 泄露检测网站的结果，暂时屏蔽
 DOMAIN-SUFFIX,ipapi.co
 DOMAIN-SUFFIX,ip6.seeip.org
@@ -104,6 +105,7 @@ DOMAIN-SUFFIX,bangumi.tv
 # 肥羊 All in One
 DOMAIN-SUFFIX,freetv.top
 
+
 # 游戏类规则
 # 红警重聚 Reunion 2023
 IP-CIDR,108.174.48.100/32,no-resolve
@@ -117,7 +119,9 @@ DOMAIN-SUFFIX,game.maj-soul.com
 # 以下是准备向 GeoSite 上游仓库提交 PR 的国内冷门域名，收录后会删除对应内容
 # ---------------------------------------
 # 以下域名待提交 PR
-
+# 希沃学习机
+DOMAIN-SUFFIX,seedpace.com
+DOMAIN-SUFFIX,qiaoxuesi.com
 # ---------------------------------------
 # 以下域名已提交 PR
 
@@ -126,6 +130,8 @@ DOMAIN-SUFFIX,game.maj-soul.com
 DOMAIN-SUFFIX,seaflysoft.com
 
 # PR 至 v2fly/domain-list-community
+# 鸿蒙出境易
+DOMAIN-SUFFIX,chujingapp.com
 
 # ---------------------------------------
 # =======================================
