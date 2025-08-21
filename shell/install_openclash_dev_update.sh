@@ -19,20 +19,24 @@ sleep 1
 
 # 检测系统使用的包管理器，并设置对应后缀和安装命令
 echo "--------------------[ 检查包管理器 ]--------------------"
-# 检测 OPKG 包管理器
+# 检测 OPKG 包管理器（OpenWrt 传统版本）
 if command -v opkg >/dev/null 2>&1; then
     PKG_MGR="opkg"
     EXT="ipk"
     INSTALL_CMD="opkg install --force-reinstall"
-    echo "检测到包管理器：OPKG"
-# 检测 APK 包管理器
+    echo "检测到包管理器：OPKG (OpenWrt 传统版本)"
+# 检测 APK 包管理器（OpenWrt Snapshot 新版本）
 elif command -v apk >/dev/null 2>&1; then
     PKG_MGR="apk"
     EXT="apk"
     INSTALL_CMD="apk add -q --force-overwrite --clean-protected --allow-untrusted"
-    echo "检测到包管理器：APK"
+    echo "检测到包管理器：APK (OpenWrt Snapshot 新版本)"
 else
-    echo "未检测到 OPKG 或 APK，无法继续安装。"
+    echo "错误：未检测到支持的包管理器"
+    echo "支持的包管理器："
+    echo "  - OPKG (OpenWrt 传统版本)"
+    echo "  - APK  (OpenWrt Snapshot 新版本)"
+    echo "请确保在支持的系统上运行此脚本。"
     exit 1
 fi
 
@@ -90,61 +94,8 @@ fi
 echo "OpenClash dev 最新版安装成功！"
 echo 
 
-# OpenClash 包安装完成后，更新 Smart 内核模型
-echo "--------------------[ 更新 Smart 内核模型 ]----------------"
-if [ $RET -eq 0 ]; then
-  SMART_ENABLE=$(uci get openclash.config.smart_enable 2>/dev/null)
-  if [ "$SMART_ENABLE" = "1" ]; then
-    echo "检测到 Smart 内核已开启。"
-    echo "正在获取最新 Smart 内核模型文件信息..."
-
-    MODEL_URL=""
-    TMP_JSON="/tmp/mihomo_releases.json"
-    wget -q -O "$TMP_JSON" "https://api.github.com/repos/vernesong/mihomo/releases"
-
-    model_line=$(grep -n '"name": *"Model-large.bin"' "$TMP_JSON" | head -n1 | cut -d: -f1)
-    if [ -n "$model_line" ]; then
-      MODEL_URL=$(tail -n +"$model_line" "$TMP_JSON" | grep -m1 '"browser_download_url":' | sed 's/.*"browser_download_url": *"//;s/".*//')
-    fi
-
-    # echo "DEBUG: MODEL_URL=$MODEL_URL"
-
-    if [ -n "$MODEL_URL" ]; then
-      MODEL_PATH="/etc/openclash/Model.bin"
-      MODEL_URL_GHPROXY="https://gh-proxy.com/${MODEL_URL#https://}"
-      MODEL_URL_GHFAST="https://ghfast.top/${MODEL_URL}"
-
-      echo "尝试通过 GitHub 反代 CDN（ghfast.top）下载内核模型文件..."
-      wget --show-progress --progress=bar:force:noscroll -T 30 -O "$MODEL_PATH" "$MODEL_URL_GHFAST" 2>/dev/null || wget -T 30 -O "$MODEL_PATH" "$MODEL_URL_GHFAST"
-      if [ $? -eq 0 ]; then
-        echo "Smart 内核模型文件下载成功（ghfast.top）：$MODEL_PATH"
-      else
-        echo "尝试通过 GitHub 反代 CDN（gh-proxy.com）下载内核模型文件..."
-        wget --show-progress --progress=bar:force:noscroll -T 30 -O "$MODEL_PATH" "$MODEL_URL_GHPROXY" 2>/dev/null || wget -T 30 -O "$MODEL_PATH" "$MODEL_URL_GHPROXY"
-        if [ $? -eq 0 ]; then
-          echo "Smart 内核模型文件下载成功（gh-proxy）：$MODEL_PATH"
-        else
-          echo "反代 CDN 均失败，尝试通过 GitHub 直链下载..."
-          wget --show-progress --progress=bar:force:noscroll -T 30 -O "$MODEL_PATH" "$MODEL_URL" 2>/dev/null || wget -T 30 -O "$MODEL_PATH" "$MODEL_URL"
-          if [ $? -eq 0 ]; then
-            echo "Smart 内核模型文件下载成功（GitHub 直链）：$MODEL_PATH"
-          else
-            echo "所有方式均失败，Smart 内核启动时会自动下载模型文件。"
-          fi
-        fi
-      fi
-    else
-      echo "未能获取到 Smart 内核模型文件的下载链接，Smart 内核启动时会自动下载模型文件。"
-    fi
-  else
-    echo "检测到 Smart 内核未启用。"
-  fi
-fi
-echo 
-
 # 清理临时文件
 rm -f "$TEMP_FILE"
-[ -f /tmp/mihomo_releases.json ] && rm -f /tmp/mihomo_releases.json
 
 # 加载 OpenClash 预设配置（如果存在）
 echo "--------------------[ 加载个性化预设配置 ]----------------"
@@ -157,6 +108,8 @@ if [ -f /etc/config/openclash-set ]; then
     exit 1
   fi
   echo "个性化预设配置加载完成！"
+else
+  echo "未检测到个性化预设配置文件，跳过此步骤。"
 fi
 echo 
 
