@@ -20,11 +20,8 @@ proxy-providers:
     header:  # 可选：自定义 HTTP 请求头
     health-check:
       enable: true
-      url: https://cp.cloudflare.com/generate_204
+      url: https://www.gstatic.com/generate_204
       interval: 300
-      timeout: 5000
-      lazy: false
-      expected-status: 204
     override:
       udp: true
       # 不建议默认跳过 TLS 证书校验；仅在明确需要兼容特定节点时启用
@@ -61,6 +58,8 @@ proxy-groups:
   # 当前配置：显示 provider1 中的全部有效节点。
   - name: "🚀 手动选择"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "♻️ 自动选择"
       - "🇭🇰 香港节点"
@@ -85,11 +84,13 @@ proxy-groups:
     type: url-test
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "💬 即时通讯"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -113,6 +114,8 @@ proxy-groups:
       - provider1
   - name: "🌐 社交媒体"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -136,6 +139,8 @@ proxy-groups:
       - provider1
   - name: "📞 Talkatone"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -159,6 +164,60 @@ proxy-groups:
       - provider1
   - name: "🚀 GitHub"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - "🚀 手动选择"
+      - "♻️ 自动选择"
+      - "🇭🇰 香港节点"
+      - "🇺🇸 美国节点"
+      - "🇯🇵 日本节点"
+      - "🇸🇬 新加坡节点"
+      - "🇼🇸 台湾节点"
+      - "🇰🇷 韩国节点"
+      - "🇨🇦 加拿大节点"
+      - "🇬🇧 英国节点"
+      - "🇫🇷 法国节点"
+      - "🇩🇪 德国节点"
+      - "🇳🇱 荷兰节点"
+      - "🇹🇷 土耳其节点"
+      - "🇷🇺 俄罗斯节点"
+      - "🌐 其他地区"
+      - "🏠 家宽节点"
+      - "🐢 低倍率节点"
+      - "🎯 全球直连"
+    use:
+      - provider1
+  - name: "💻 开发者服务"
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - "🚀 手动选择"
+      - "♻️ 自动选择"
+      - "🇭🇰 香港节点"
+      - "🇺🇸 美国节点"
+      - "🇯🇵 日本节点"
+      - "🇸🇬 新加坡节点"
+      - "🇼🇸 台湾节点"
+      - "🇰🇷 韩国节点"
+      - "🇨🇦 加拿大节点"
+      - "🇬🇧 英国节点"
+      - "🇫🇷 法国节点"
+      - "🇩🇪 德国节点"
+      - "🇳🇱 荷兰节点"
+      - "🇹🇷 土耳其节点"
+      - "🇷🇺 俄罗斯节点"
+      - "🌐 其他地区"
+      - "🏠 家宽节点"
+      - "🐢 低倍率节点"
+      - "🎯 全球直连"
+    use:
+      - provider1
+  - name: "📚 学术资源"
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -183,6 +242,8 @@ proxy-groups:
       - provider1
   - name: "🤖 ChatGPT"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -206,6 +267,8 @@ proxy-groups:
       - provider1
   - name: "🤖 Copilot"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -227,9 +290,37 @@ proxy-groups:
       - "🐢 低倍率节点"
     use:
       - provider1
-  - name: "🤖 AI服务"
+  - name: "🤖 国外AI服务"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
+      - "🚀 手动选择"
+      - "♻️ 自动选择"
+      - "🇸🇬 新加坡节点"
+      - "🇭🇰 香港节点"
+      - "🇺🇸 美国节点"
+      - "🇯🇵 日本节点"
+      - "🇼🇸 台湾节点"
+      - "🇰🇷 韩国节点"
+      - "🇨🇦 加拿大节点"
+      - "🇬🇧 英国节点"
+      - "🇫🇷 法国节点"
+      - "🇩🇪 德国节点"
+      - "🇳🇱 荷兰节点"
+      - "🇹🇷 土耳其节点"
+      - "🇷🇺 俄罗斯节点"
+      - "🌐 其他地区"
+      - "🏠 家宽节点"
+      - "🐢 低倍率节点"
+    use:
+      - provider1
+  - name: "🤖 国内AI服务"
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - "🎯 全球直连"
       - "🚀 手动选择"
       - "♻️ 自动选择"
       - "🇸🇬 新加坡节点"
@@ -252,6 +343,8 @@ proxy-groups:
       - provider1
   - name: "🎶 TikTok"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -275,6 +368,8 @@ proxy-groups:
       - provider1
   - name: "📹 YouTube"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -298,6 +393,8 @@ proxy-groups:
       - provider1
   - name: "🎥 Netflix"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -321,6 +418,8 @@ proxy-groups:
       - provider1
   - name: "🎥 DisneyPlus"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -344,6 +443,8 @@ proxy-groups:
       - provider1
   - name: "🎥 HBO"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -367,6 +468,8 @@ proxy-groups:
       - provider1
   - name: "🎥 PrimeVideo"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -390,6 +493,8 @@ proxy-groups:
       - provider1
   - name: "🎥 AppleTV+"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -414,6 +519,8 @@ proxy-groups:
       - provider1
   - name: "🎥 Emby"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -438,6 +545,8 @@ proxy-groups:
       - provider1
   - name: "🎻 Spotify"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -462,14 +571,19 @@ proxy-groups:
       - provider1
   - name: "📺 Bahamut"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🇼🇸 台湾节点"
+      - "🇭🇰 香港节点"
       - "🚀 手动选择"
       - "🎯 全球直连"
     use:
       - provider1
   - name: "🌎 国外媒体"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -493,6 +607,8 @@ proxy-groups:
       - provider1
   - name: "🛒 国外电商"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -516,6 +632,8 @@ proxy-groups:
       - provider1
   - name: "🪙 加密货币"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -539,9 +657,12 @@ proxy-groups:
       - provider1
   - name: "📢 谷歌FCM"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
+      - "🎯 全球直连"
       - "🇭🇰 香港节点"
       - "🇺🇸 美国节点"
       - "🇯🇵 日本节点"
@@ -562,6 +683,8 @@ proxy-groups:
       - provider1
   - name: "🇬 谷歌服务"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🚀 手动选择"
       - "♻️ 自动选择"
@@ -585,6 +708,8 @@ proxy-groups:
       - provider1
   - name: "🍎 苹果服务"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -609,6 +734,8 @@ proxy-groups:
       - provider1
   - name: "Ⓜ️ 微软服务"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -633,6 +760,8 @@ proxy-groups:
       - provider1
   - name: "💾 OneDrive"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -657,6 +786,8 @@ proxy-groups:
       - provider1
   - name: "💳 PayPal"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -677,6 +808,30 @@ proxy-groups:
       - "🌐 其他地区"
       - "🏠 家宽节点"
       - "🐢 低倍率节点"
+  - name: "📹 Zoom"
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - "🇭🇰 香港节点"
+      - "🇺🇸 美国节点"
+      - "🇯🇵 日本节点"
+      - "🇸🇬 新加坡节点"
+      - "🇼🇸 台湾节点"
+      - "🇰🇷 韩国节点"
+      - "🇨🇦 加拿大节点"
+      - "🇬🇧 英国节点"
+      - "🇫🇷 法国节点"
+      - "🇩🇪 德国节点"
+      - "🇳🇱 荷兰节点"
+      - "🇹🇷 土耳其节点"
+      - "🇷🇺 俄罗斯节点"
+      - "🌐 其他地区"
+      - "🏠 家宽节点"
+      - "🐢 低倍率节点"
+      - "♻️ 自动选择"
+      - "🚀 手动选择"
+      - "🎯 全球直连"
   # 🎮 游戏平台：旧版配置，保留用于快速回退
   # 如需恢复，请注释下方当前配置，并取消注释旧组块
 #   - name: "🎮 游戏平台"
@@ -706,6 +861,8 @@ proxy-groups:
       - provider1
   - name: "🎮 游戏平台"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -730,6 +887,8 @@ proxy-groups:
       - provider1
   - name: "🎮 Steam"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -754,6 +913,8 @@ proxy-groups:
       - provider1
   - name: "⏬ PT站点"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🇭🇰 香港节点"
       - "🇺🇸 美国节点"
@@ -778,6 +939,8 @@ proxy-groups:
       - provider1
   - name: "🚀 测速工具"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -802,6 +965,8 @@ proxy-groups:
       - provider1
   - name: "🌍 国外域名"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -826,6 +991,8 @@ proxy-groups:
       - provider1
   - name: "🐟 漏网之鱼"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🎯 全球直连"
       - "🚀 手动选择"
@@ -850,6 +1017,8 @@ proxy-groups:
       - provider1
   - name: "🔀 非标端口"
     type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - "🐟 漏网之鱼"
       - "🎯 全球直连"
@@ -858,7 +1027,7 @@ proxy-groups:
     filter: '(?i)(🇭🇰|港|\bHK(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|hk|Hong Kong|HongKong|hongkong|HONG KONG|HONGKONG|深港|HKG|九龙|Kowloon|新界|沙田|荃湾|葵涌)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇺🇸 美国节点"
@@ -866,7 +1035,7 @@ proxy-groups:
     filter: '(?i)(🇺🇸|美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|纽约|纽纽|亚特兰大|迈阿密|华盛顿|\bUS(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|United States|UnitedStates|UNITED STATES|USA|America|AMERICA|JFK|EWR|IAD|ATL|ORD|MIA|NYC|LAX|SFO|SEA|DFW|SJC)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇯🇵 日本节点"
@@ -874,7 +1043,7 @@ proxy-groups:
     filter: '(?i)(🇯🇵|日本|川日|东京|大阪|泉日|埼玉|沪日|深日|(?<!尼|-)日|\bJP(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Japan|JAPAN|JPN|NRT|HND|KIX|TYO|OSA|关西|Kansai|KANSAI)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇸🇬 新加坡节点"
@@ -882,7 +1051,7 @@ proxy-groups:
     filter: '(?i)(🇸🇬|新加坡|坡|狮城|\bSG(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Singapore|SINGAPORE|SIN)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇼🇸 台湾节点"
@@ -890,7 +1059,7 @@ proxy-groups:
     filter: '(?i)(🇹🇼|🇼🇸|台|新北|彰化|\bTW(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Taiwan|TAIWAN|TWN|TPE|ROC)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇰🇷 韩国节点"
@@ -898,7 +1067,7 @@ proxy-groups:
     filter: '(?i)(🇰🇷|\bKR(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Korea|KOREA|KOR|首尔|韩|韓|春川|Chuncheon|ICN)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇨🇦 加拿大节点"
@@ -906,7 +1075,7 @@ proxy-groups:
     filter: '(?i)(🇨🇦|加拿大|\bCA(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Canada|CANADA|CAN|渥太华|温哥华|卡尔加里|蒙特利尔|Montreal|YVR|YYZ|YUL)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇬🇧 英国节点"
@@ -914,7 +1083,7 @@ proxy-groups:
     filter: '(?i)(🇬🇧|英国|Britain|United Kingdom|UNITED KINGDOM|England|伦敦|曼彻斯特|Manchester|\bUK(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|GBR|LHR|MAN)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇫🇷 法国节点"
@@ -922,7 +1091,7 @@ proxy-groups:
     filter: '(?i)(🇫🇷|法国|\bFR(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|France|FRANCE|FRA|巴黎|马赛|Marseille|CDG|MRS)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇩🇪 德国节点"
@@ -930,7 +1099,7 @@ proxy-groups:
     filter: '(?i)(🇩🇪|德国|Germany|GERMANY|\bDE(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|DEU|柏林|法兰克福|慕尼黑|Munich|MUC)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇳🇱 荷兰节点"
@@ -938,7 +1107,7 @@ proxy-groups:
     filter: '(?i)(🇳🇱|荷兰|Netherlands|NETHERLANDS|\bNL(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|NLD|阿姆斯特丹|AMS)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇹🇷 土耳其节点"
@@ -946,7 +1115,7 @@ proxy-groups:
     filter: '(?i)(🇹🇷|土耳其|Turkey|TURKEY|Türkiye|\bTR(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|TUR|IST|ANK)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🇷🇺 俄罗斯节点"
@@ -954,7 +1123,7 @@ proxy-groups:
     filter: '(?i)(🇷🇺|(?<!白)俄罗斯|(?<!白)俄|莫斯科|圣彼得堡|新西伯利亚|海参崴|符拉迪沃斯托克|哈巴罗夫斯克|伯力|\bRU(?:[-_ ]?\d+)?\b|Russia)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🌐 其他地区"
@@ -962,7 +1131,7 @@ proxy-groups:
     filter: '(?i)(^(?!.*(港|\bHK(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|hk|Hong Kong|HongKong|hongkong|HONG KONG|HONGKONG|深港|HKG|🇭🇰|九龙|Kowloon|新界|沙田|荃湾|葵涌|美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|纽约|纽纽|亚特兰大|迈阿密|华盛顿|\bUS(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|United States|UnitedStates|UNITED STATES|USA|America|AMERICA|JFK|EWR|IAD|ATL|ORD|MIA|NYC|LAX|SFO|SEA|DFW|SJC|🇺🇸|日本|川日|东京|大阪|泉日|埼玉|沪日|深日|(?<!尼|-)日|\bJP(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Japan|JAPAN|JPN|NRT|HND|KIX|TYO|OSA|🇯🇵|关西|Kansai|KANSAI|新加坡|坡|狮城|\bSG(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Singapore|SINGAPORE|SIN|🇸🇬|台|新北|彰化|\bTW(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Taiwan|TAIWAN|TWN|TPE|ROC|🇹🇼|\bKR(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Korea|KOREA|KOR|首尔|韩|韓|春川|Chuncheon|ICN|🇰🇷|加拿大|\bCA(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|Canada|CANADA|CAN|渥太华|温哥华|卡尔加里|蒙特利尔|Montreal|YVR|YYZ|YUL|🇨🇦|英国|Britain|United Kingdom|UNITED KINGDOM|England|伦敦|曼彻斯特|Manchester|\bUK(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|GBR|LHR|MAN|🇬🇧|法国|\bFR(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|France|FRANCE|FRA|巴黎|马赛|Marseille|CDG|MRS|🇫🇷|德国|Germany|GERMANY|\bDE(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|DEU|柏林|法兰克福|慕尼黑|Munich|MUC|🇩🇪|荷兰|Netherlands|NETHERLANDS|\bNL(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|NLD|阿姆斯特丹|AMS|🇳🇱|土耳其|Turkey|TURKEY|Türkiye|\bTR(?:[-_ ]?\d+(?:[-_ ]?[A-Za-z]{2,})?)?\b|TUR|IST|ANK|🇹🇷|🇷🇺|(?<!白)俄罗斯|(?<!白)俄|莫斯科|圣彼得堡|新西伯利亚|海参崴|符拉迪沃斯托克|哈巴罗夫斯克|伯力|\bRU(?:[-_ ]?\d+)?\b|Russia|家宽|家庭宽带|住宅|Residential|低倍率|低倍|(?<![\d\.])0?\.\d+(?![0-9])(?:x|倍)?|倍率[:： ]?0?\.\d+)).*)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🏠 家宽节点"
@@ -970,7 +1139,7 @@ proxy-groups:
     filter: '(?i)(家宽|家庭宽带|住宅|Residential)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🐢 低倍率节点"
@@ -978,12 +1147,13 @@ proxy-groups:
     filter: '(?i)(低倍率|低倍|(?<![\d\.])0?\.\d+(?![0-9])(?:x|倍)?|倍率[:： ]?0?\.\d+)'
     use:
       - provider1
-    url: https://cp.cloudflare.com/generate_204
+    url: https://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
   - name: "🎯 全球直连"
-    type: url-test
-    url: http://wifi.vivo.com.cn/generate_204
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 300
     proxies:
       - DIRECT
 
@@ -995,49 +1165,49 @@ rule-providers:
     behavior: classical
     interval: 28800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Port_Direct.yaml"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Port_Direct.yaml"
     format: yaml
   Custom_Direct_Domain:
     behavior: domain
-    interval: 28800
+    interval: 1800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_Domain.mrs"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_Domain.mrs"
     format: mrs
   Custom_Direct_IP:
     behavior: ipcidr
     interval: 28800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_IP.mrs"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_IP.mrs"
     format: mrs
   Custom_Direct_Port:
     behavior: classical
     interval: 28800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_Classical_Port.yaml"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Direct_Classical_Port.yaml"
     format: yaml
   Custom_Proxy_Domain:
     behavior: domain
     interval: 28800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Proxy_Domain.mrs"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Proxy_Domain.mrs"
     format: mrs
   Custom_Proxy_IP:
     behavior: ipcidr
     interval: 28800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Proxy_IP.mrs"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Custom_Proxy_IP.mrs"
     format: mrs
   Steam_CDN_Domain:
     behavior: domain
     interval: 28800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Steam_CDN_Domain.mrs"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Steam_CDN_Domain.mrs"
     format: mrs
   Steam_CDN_IP:
     behavior: ipcidr
     interval: 28800
     type: http
-    url: "https://testingcf.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Steam_CDN_IP.mrs"
+    url: "https://cdn.jsdelivr.net/gh/Aethersailor/Custom_OpenClash_Rules@main/rule/Steam_CDN_IP.mrs"
     format: mrs
 
 # ==================== 分流规则 Rules ====================
@@ -1057,14 +1227,22 @@ rules:
   - "RULE-SET,Steam_CDN_IP,🎯 全球直连,no-resolve"
   - "GEOSITE,category-game-platforms-download,🎯 全球直连"
   - "GEOSITE,category-public-tracker,🎯 全球直连"
+  # Zoom 视频会议优先走代理，可在独立策略组切换直连。
+  - "GEOSITE,zoom,📹 Zoom"
   - "GEOSITE,category-communication,💬 即时通讯"
   - "GEOSITE,category-social-media-!cn,🌐 社交媒体"
   - "GEOSITE,talkatone,📞 Talkatone"
   - "GEOSITE,openai,🤖 ChatGPT"
   - "GEOSITE,onedrive,💾 OneDrive"
   - "GEOSITE,bing,🤖 Copilot"
-  - "GEOSITE,category-ai-!cn,🤖 AI服务"
+  - "GEOSITE,category-ai-!cn,🤖 国外AI服务"
+  # 国内 AI 服务默认直连，可按需切换代理；须位于 cn 兜底规则之前。
+  - "GEOSITE,category-ai-cn,🤖 国内AI服务"
   - "GEOSITE,github,🚀 GitHub"
+  # GitHub 保留独立策略组，其余开发者服务在此匹配。
+  - "GEOSITE,category-dev,💻 开发者服务"
+  # 国外学术资源须先于 Google 等服务大类匹配。
+  - "GEOSITE,category-scholar-!cn,📚 学术资源"
   - "GEOSITE,category-speedtest,🚀 测速工具"
   - "GEOSITE,steam,🎮 Steam"
   - "GEOSITE,youtube,📹 YouTube"
@@ -1082,6 +1260,7 @@ rules:
   - "GEOSITE,spotify,🎻 Spotify"
   - "GEOSITE,bahamut,📺 Bahamut"
   - "GEOSITE,category-games,🎮 游戏平台"
+  - "GEOSITE,category-media,🌎 国外媒体"
   - "GEOSITE,category-entertainment,🌎 国外媒体"
   - "GEOSITE,category-pt,⏬ PT站点"
   - "GEOSITE,paypal,💳 PayPal"

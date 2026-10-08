@@ -19,7 +19,14 @@ on:
       - 'rule/game_rule/**/*.list'
       - 'py/generate_rules.py'
       - 'py/generate_stash_configs.py'
-      - 'cfg/Custom_Clash*.ini'
+      - 'cfg/Custom_Clash.ini'
+      - 'cfg/Custom_Clash_Fallback.ini'
+      - 'cfg/Custom_Clash_Lite.ini'
+      - 'cfg/Custom_Clash_Lite_Fallback.ini'
+      - 'cfg/Custom_Clash_GFW.ini'
+      - 'cfg/Custom_Clash_GFW_Fallback.ini'
+      - 'cfg/Custom_Clash_Full.ini'
+      - 'cfg/Custom_Clash_Full_Fallback.ini'
   workflow_dispatch:
     inputs:
       source_before_sha:
@@ -79,15 +86,15 @@ jobs:
       - name: Set up pinned Mihomo
         uses: ./.github/actions/setup-mihomo
 
-      - name: Generate derived rules and Stash templates
+      - name: Generate derived rules and Mainland compatibility template
         run: |
           python py/generate_rules.py --mihomo mihomo
-          python py/generate_stash_configs.py
+          python py/generate_stash_configs.py --target mainland
 
       - name: Test generation and conversion logic
         run: |
           python py/generate_rules.py --check --mihomo mihomo
-          python py/generate_stash_configs.py --check
+          python py/generate_stash_configs.py --check --target mainland
 
       - name: Commit and push changes
         id: publish
@@ -102,14 +109,14 @@ jobs:
             ':(glob)rule/*.mrs'
             ':(glob)rule/game_rule/**/*.yaml'
             ':(glob)rule/game_rule/**/*.mrs'
-            ':(glob)cfg/Custom_Stash*.ini'
+            'cfg/Custom_Clash_Mainland.ini'
           )
           generated_excludes=(
             ':(exclude,glob)rule/*.yaml'
             ':(exclude,glob)rule/*.mrs'
             ':(exclude,glob)rule/game_rule/**/*.yaml'
             ':(exclude,glob)rule/game_rule/**/*.mrs'
-            ':(exclude,glob)cfg/Custom_Stash*.ini'
+            ':(exclude)cfg/Custom_Clash_Mainland.ini'
           )
           remote_main_sha() {
             git ls-remote --exit-code origin refs/heads/main |
@@ -123,8 +130,8 @@ jobs:
             git reset --hard origin/main
             python py/generate_rules.py --mihomo mihomo
             python py/generate_rules.py --check --mihomo mihomo
-            python py/generate_stash_configs.py
-            python py/generate_stash_configs.py --check
+            python py/generate_stash_configs.py --target mainland
+            python py/generate_stash_configs.py --check --target mainland
 
             unexpected_changes="$(
               git status --short --untracked-files=all -- . \
@@ -178,6 +185,35 @@ jobs:
           echo "Final revision to publish: $publication_sha"
           echo "publication_sha=$publication_sha" >> "$GITHUB_OUTPUT"
 
+  sync-stash:
+    needs: generate-rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Request generated Stash template sync
+        env:
+          GH_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+          SOURCE_SHA: ${{ needs.generate-rules.outputs.publication_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$GH_TOKEN" ]; then
+            echo "TARGET_REPO_TOKEN is required for cross-repository dispatch." >&2
+            exit 1
+          fi
+          jq -n \
+            --arg source_sha "$SOURCE_SHA" \
+            '{
+              event_type: "sync-generated-stash",
+              client_payload: {source_sha: $source_sha}
+            }' |
+            gh api \
+              --method POST \
+              repos/Aethersailor/Custom_Stash_Rules/dispatches \
+              --input -
+
   # Generation and format validation already ran against the exact worktree that
   # was published. Purge its changed cache keys without re-running unrelated tests.
   purge-generated:
@@ -185,6 +221,8 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/purge-jsdelivr.yml
+    secrets: inherit
     with:
       before_sha: ${{ needs.generate-rules.outputs.purge_base_sha }}
       after_sha: ${{ needs.generate-rules.outputs.publication_sha }}
+      generation_complete: true

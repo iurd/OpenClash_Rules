@@ -1,6 +1,12 @@
 name: Validate repository
 
 on:
+  workflow_call:
+    inputs:
+      revision:
+        description: Exact repository revision to validate
+        required: true
+        type: string
   push:
     branches:
       - main
@@ -10,8 +16,12 @@ on:
       - 'py/**'
       - 'script/**/*.js'
       - 'shell/**/*.sh'
+      - 'overwrite/**/*.conf'
+      - 'overwrite/local/**/*.sh'
       - 'cfg/*.ini'
       - 'cfg/yaml/**'
+      - 'requirements*.txt'
+      - 'workers/repository-mirror/**'
   pull_request:
     branches:
       - main
@@ -26,18 +36,41 @@ on:
       - 'rule/game_rule/**/*.list'
       - 'script/**/*.js'
       - 'shell/**/*.sh'
+      - 'overwrite/**/*.conf'
+      - 'overwrite/local/**/*.sh'
       - 'cfg/*.ini'
       - 'cfg/yaml/**'
+      - 'requirements*.txt'
+      - 'workers/repository-mirror/**'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}
+  group: >-
+    validate-${{ inputs.revision && 'snapshot' || 'event' }}-${{
+      inputs.revision || github.ref
+    }}
   cancel-in-progress: true
 
 jobs:
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Reject newly introduced vulnerable dependencies
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: low
+          fail-on-scopes: development, runtime, unknown
+          retry-on-snapshot-warnings: true
+          retry-on-snapshot-warnings-timeout: 120
+          show-openssf-scorecard: true
+          warn-on-openssf-scorecard-level: 5
+          show-patched-versions: true
+
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -45,6 +78,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ inputs.revision || github.sha }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -68,7 +102,7 @@ jobs:
         uses: ./.github/actions/setup-mihomo
 
       - name: Materialize derived rules for changed sources
-        if: github.event_name != 'workflow_dispatch'
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -135,11 +169,13 @@ jobs:
           sh -n shell/check_cpu_version.sh
           sh -n shell/install_openclash_dev.sh
           sh -n shell/install_openclash_dev_update.sh
+          sh -n overwrite/local/Use_LuCI_DNS_Only.sh
           sh -n .github/scripts/test_installers.sh
-          shellcheck --shell=sh shell/check_cpu_version.sh shell/install_openclash_dev.sh shell/install_openclash_dev_update.sh .github/scripts/test_installers.sh
+          shellcheck --shell=sh shell/check_cpu_version.sh shell/install_openclash_dev.sh shell/install_openclash_dev_update.sh overwrite/local/Use_LuCI_DNS_Only.sh .github/scripts/test_installers.sh
           actionlint .github/workflows/*.yml
           sh shell/check_cpu_version.sh --self-check
-          python -m unittest discover -s py -p 'test_rule_generation.py'
+          python -m unittest discover -s py -p 'test_*.py'
+          ruby py/test_overwrite_runtime.rb
           python -m unittest discover -s .github/scripts -p 'test_*.py'
           python .github/scripts/jsdelivr_purge.py check-contract --revision HEAD
           sh .github/scripts/test_installers.sh
@@ -147,10 +183,26 @@ jobs:
           python py/generate_game_cdn.py --check
           python py/update_encrypted_dns.py --check
           python py/generate_rules.py --check --mihomo mihomo
-          python py/generate_stash_configs.py --check
+          python py/generate_stash_configs.py --check --target mainland
 
       - name: Validate complete Mihomo templates
         run: |
           for config in cfg/yaml/*.yaml; do
             mihomo -t -d "$RUNNER_TEMP/mihomo-config" -f "$config"
           done
+
+      - name: Build and validate Cloudflare mirror bundle
+        env:
+          MIRROR_REVISION: ${{ inputs.revision || github.sha }}
+        run: |
+          python .github/scripts/jsdelivr_purge.py build-worker-assets \
+            --revision "$MIRROR_REVISION" \
+            --output workers/repository-mirror/dist
+          npm ci --prefix workers/repository-mirror
+          npm audit --prefix workers/repository-mirror --audit-level=high
+          npm run check --prefix workers/repository-mirror
+          (
+            cd workers/repository-mirror
+            npm exec -- wrangler deploy \
+              --dry-run --outdir "$RUNNER_TEMP/wrangler-dry-run"
+          )

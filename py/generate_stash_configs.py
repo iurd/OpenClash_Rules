@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Stash-specific subconverter templates from maintained Clash policy."""
+"""Generate tracked compatibility templates from maintained Clash policy."""
 
 from __future__ import annotations
 
@@ -51,8 +51,8 @@ DIRECT_SOURCE_PASSTHROUGH_TYPES = frozenset(
 SUPPORTED_SETTINGS = frozenset(
     {"enable_rule_generator=true", "overwrite_original_rules=true"}
 )
-BENCHMARK_URL = "https://cp.cloudflare.com/generate_204"
-SELECT_PSEUDO_URL = "http://wifi.vivo.com.cn/generate_204"
+BENCHMARK_URL = "https://www.gstatic.com/generate_204"
+SELECT_PSEUDO_URL = BENCHMARK_URL
 STASH_BUILTIN_POLICIES = frozenset({"DIRECT", "REJECT", "REJECT-DROP", "PASS"})
 
 # Every classical source is deliberately enumerated. A new source must choose an
@@ -395,34 +395,86 @@ def generated_outputs(root: Path) -> dict[Path, str]:
     return outputs
 
 
-def check_outputs(root: Path, outputs: dict[Path, str] | None = None) -> tuple[Path, ...]:
-    expected = outputs if outputs is not None else generated_outputs(root)
+def check_stash_outputs(
+    output_dir: Path,
+    outputs: dict[Path, str],
+) -> tuple[Path, ...]:
+    """Return missing, stale, or unexpected generated Stash templates."""
+    expected_names = {relative_path.name for relative_path in outputs}
     mismatches = []
-    for relative_path, content in expected.items():
-        path = root / relative_path
+    for relative_path, content in outputs.items():
+        path = output_dir / relative_path.name
         if not path.exists() or path.read_text(encoding="utf-8") != content:
-            mismatches.append(relative_path)
-    return tuple(mismatches)
+            mismatches.append(Path(path.name))
+    if output_dir.exists():
+        for path in output_dir.glob("Custom_Stash*.ini"):
+            if path.is_file() and path.name not in expected_names:
+                mismatches.append(Path(path.name))
+    return tuple(sorted(mismatches, key=lambda path: path.as_posix()))
+
+
+def write_stash_outputs(output_dir: Path, outputs: dict[Path, str]) -> None:
+    """Write the complete generated Stash set to an explicit directory."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    expected_names = {relative_path.name for relative_path in outputs}
+    for path in output_dir.glob("Custom_Stash*.ini"):
+        if path.is_file() and path.name not in expected_names:
+            path.unlink()
+            print(f"removed stale {path.as_posix()}")
+    for relative_path, content in outputs.items():
+        path = output_dir / relative_path.name
+        path.write_text(content, encoding="utf-8")
+        print(f"generated {path.as_posix()}")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="check committed outputs")
+    parser.add_argument(
+        "--target",
+        choices=("stash", "mainland"),
+        default="mainland",
+        help="select generated compatibility outputs (default: mainland)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="directory for Stash templates (default: source repository cfg)",
+    )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    outputs = generated_outputs(root)
+    if args.target != "stash" and args.output_dir is not None:
+        parser.error("--output-dir is only valid when generating Stash templates")
+
+    stash_outputs = generated_outputs(root)
+    stash_output_dir = (
+        args.output_dir.resolve() if args.output_dir is not None else root / "cfg"
+    )
+    mainland_path = root / "cfg" / "Custom_Clash_Mainland.ini"
+    mainland_content = (root / "cfg" / "Custom_Clash.ini").read_text(
+        encoding="utf-8"
+    )
     if args.check:
-        mismatches = check_outputs(root, outputs)
+        mismatches: list[Path] = []
+        if args.target == "stash":
+            mismatches.extend(check_stash_outputs(stash_output_dir, stash_outputs))
+        if args.target == "mainland" and (
+            not mainland_path.exists()
+            or mainland_path.read_text(encoding="utf-8") != mainland_content
+        ):
+            mismatches.append(Path("cfg/Custom_Clash_Mainland.ini"))
         if mismatches:
             for path in mismatches:
-                print(f"outdated generated Stash template: {path.as_posix()}")
+                print(f"outdated generated compatibility template: {path.as_posix()}")
             return 1
-        print("generated Stash templates are current")
+        print("generated compatibility templates are current")
         return 0
 
-    for relative_path, content in outputs.items():
-        (root / relative_path).write_text(content, encoding="utf-8")
-        print(f"generated {relative_path.as_posix()}")
+    if args.target == "stash":
+        write_stash_outputs(stash_output_dir, stash_outputs)
+    if args.target == "mainland":
+        mainland_path.write_text(mainland_content, encoding="utf-8")
+        print("generated cfg/Custom_Clash_Mainland.ini")
     return 0
 
 

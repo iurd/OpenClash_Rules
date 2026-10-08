@@ -143,6 +143,18 @@ class DerivedRuleGenerationTests(unittest.TestCase):
         self.assertEqual(family.domain, ("+.example.com",))
         self.assertIn(r"DOMAIN-REGEX,^dns[0-9]+\.example\.com$", family.classical)
 
+    def test_domain_keyword_stays_classical_only(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "rules.list"
+            source.write_text(
+                "DOMAIN-SUFFIX,example.com\n"
+                "DOMAIN-KEYWORD,synology\n",
+                encoding="utf-8",
+            )
+            family = generate_rules.parse_list(source)
+        self.assertEqual(family.domain, ("+.example.com",))
+        self.assertIn("DOMAIN-KEYWORD,synology", family.classical)
+
     def test_domain_regex_is_yaml_quoted(self) -> None:
         rendered = generate_rules.render_yaml(
             Path("rule/example.list"),
@@ -226,10 +238,103 @@ class StashConfigGenerationTests(unittest.TestCase):
             self.outputs[Path("cfg/Custom_Stash_Mainland.ini")],
         )
 
-    def test_committed_outputs_are_current(self) -> None:
+    def test_full_zoom_policy_matches_yaml_and_stash(self) -> None:
+        for suffix, group_type in (
+            ("", "select"),
+            ("_Fallback", "fallback"),
+        ):
+            with self.subTest(suffix=suffix):
+                ini = (self.root / f"cfg/Custom_Clash_Full{suffix}.ini").read_text(
+                    encoding="utf-8"
+                )
+                yaml = (
+                    self.root / f"cfg/yaml/Custom_Clash_Full{suffix}.yaml"
+                ).read_text(encoding="utf-8")
+                stash = self.outputs[Path(f"cfg/Custom_Stash_Full{suffix}.ini")]
+
+                ini_rule = "ruleset=📹 Zoom,[]GEOSITE,zoom"
+                yaml_rule = '  - "GEOSITE,zoom,📹 Zoom"'
+                for content in (ini, stash):
+                    self.assertIn(ini_rule, content)
+                    self.assertLess(
+                        content.index(ini_rule),
+                        content.index("ruleset=🎯 全球直连,[]GEOSITE,cn"),
+                    )
+                self.assertIn(yaml_rule, yaml)
+                self.assertLess(
+                    yaml.index(yaml_rule),
+                    yaml.index('  - "GEOSITE,cn,🎯 全球直连"'),
+                )
+
+                ini_group = next(
+                    line
+                    for line in ini.splitlines()
+                    if line.startswith("custom_proxy_group=📹 Zoom`")
+                )
+                self.assertLess(
+                    ini.index("custom_proxy_group=💳 PayPal`"), ini.index(ini_group)
+                )
+                self.assertLess(
+                    ini.index(ini_group), ini.index("custom_proxy_group=🎮 游戏平台`")
+                )
+                fields = ini_group.split("`")
+                self.assertEqual(fields[1], group_type)
+                ini_members = [
+                    field.removeprefix("[]")
+                    for field in fields[2:]
+                    if field.startswith("[]")
+                ]
+                yaml_group = yaml.split('  - name: "📹 Zoom"\n', 1)[1].split(
+                    "  - name:", 1
+                )[0]
+                self.assertLess(
+                    yaml.index('  - name: "💳 PayPal"'),
+                    yaml.index('  - name: "📹 Zoom"'),
+                )
+                self.assertLess(
+                    yaml.index('  - name: "📹 Zoom"'),
+                    yaml.index('  - name: "🎮 游戏平台"'),
+                )
+                self.assertIn(f"    type: {group_type}\n", yaml_group)
+                yaml_members = [
+                    line.strip().removeprefix('- "').removesuffix('"')
+                    for line in yaml_group.splitlines()
+                    if line.startswith("      - ")
+                ]
+                self.assertEqual(ini_members, yaml_members)
+                self.assertEqual(ini_members[0], "🇭🇰 香港节点")
+                self.assertEqual(ini_members[-1], "🎯 全球直连")
+
+    def test_writes_and_checks_external_output_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir) / "cfg"
+            generate_stash_configs.write_stash_outputs(output_dir, self.outputs)
+            self.assertEqual(
+                generate_stash_configs.check_stash_outputs(
+                    output_dir,
+                    self.outputs,
+                ),
+                (),
+            )
+
+            stale_path = output_dir / "Custom_Stash_Obsolete.ini"
+            stale_path.write_text("obsolete\n", encoding="utf-8")
+            self.assertEqual(
+                generate_stash_configs.check_stash_outputs(
+                    output_dir,
+                    self.outputs,
+                ),
+                (Path("Custom_Stash_Obsolete.ini"),),
+            )
+            generate_stash_configs.write_stash_outputs(output_dir, self.outputs)
+            self.assertFalse(stale_path.exists())
+
+    def test_clash_mainland_compatibility_output_matches_standard(self) -> None:
         self.assertEqual(
-            generate_stash_configs.check_outputs(self.root, self.outputs),
-            (),
+            (self.root / "cfg/Custom_Clash_Mainland.ini").read_text(
+                encoding="utf-8"
+            ),
+            (self.root / "cfg/Custom_Clash.ini").read_text(encoding="utf-8"),
         )
 
     def test_projects_stash_rules_without_silent_unsupported_rules(self) -> None:
